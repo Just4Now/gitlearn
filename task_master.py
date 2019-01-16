@@ -26,8 +26,12 @@ for i in range(10):
 # 从result队列读取结果:
 print('Try get results...')
 for i in range(10):
-    r = result.get(timeout=10)
-    print('Result: %s' % r)
+    try:
+        r = result.get(timeout=10)
+        print('Result: %s' % r)
+    except queue.Empty:
+        print('task queue is empty.')
+
 # 关闭:
 manager.shutdown()
 print('master exit.')
