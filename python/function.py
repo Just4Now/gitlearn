@@ -2,6 +2,8 @@ import math
 from functools import reduce
 import functools
 import os
+import re
+from datetime import datetime, timezone, timedelta
 
 
 def abs(number):
@@ -216,3 +218,16 @@ def search_file(p, s):
     
 def print_dir_l():
     os.system('ls -l .')
+
+def to_timestamp(dt_str, tz_str):
+    dt = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+    re_compile = re.compile(r'UTC(\S)(\d+):\d+')
+    m = re_compile.match(tz_str)
+    h = int(m.group(2))
+    if m.group(1) == '+':
+        tzinfo = timezone(timedelta(hours=h))
+    elif m.group(1) == '-':
+        tzinfo = timezone(-timedelta(hours=h))
+    else:
+        pass
+    return dt.replace(tzinfo=tzinfo).timestamp()
