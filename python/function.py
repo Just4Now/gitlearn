@@ -4,6 +4,7 @@ import functools
 import os
 import re
 from datetime import datetime, timezone, timedelta
+import base64
 
 
 def abs(number):
@@ -231,3 +232,20 @@ def to_timestamp(dt_str, tz_str):
     else:
         pass
     return dt.replace(tzinfo=tzinfo).timestamp()
+
+def safe_base64_decode(s):
+    utf8_s = s.decode('utf-8')
+    count = 0
+    for c in utf8_s:
+        if c == '=':
+            count = count + 1
+    if count != 0:
+        return base64.b64decode(s)
+    else:
+        for i in range(4):
+            if (len(utf8_s) + i) % 4 == 0:
+                count = i
+                break
+        normal_utf8_s = utf8_s + '=' * count
+        normal_s = normal_utf8_s.encode('utf-8')
+        return base64.b64decode(normal_s)
